@@ -1,25 +1,41 @@
 version: 2.1
 
-jobs: 
-  hello-world:
-    docker: 
-      - image: cimg/base:stable
-    steps: 
+jobs:
+  build:
+    docker:
+      - image: cimg/node:18.17
+    steps:
       - checkout
-      - run: echo " Hello, Circleci!"
-  
-  hello-world-2:
-    docker: 
-      - image: cimg/base:stable
-    steps: 
+      - run: npm install
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules
+
+  test:
+    docker:
+      - image: cimg/node:18.17
+    steps:
       - checkout
-      - run: echo " Hello, Circleci!"
+      - attach_workspace:
+          at: .
+      - run: npm test
 
+  deploy:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run: echo "Deploying app..." 
+      # Here you’d run kubectl, terraform, or aws cli
 
-workflows: 
-  build: 
-    jobs: 
-      - hello-world
-      - hello-world-2: 
-          requires: 
-            - hello-world
+workflows:
+  ci_pipeline:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test
