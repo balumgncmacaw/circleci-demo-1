@@ -1,34 +1,27 @@
 version: 2.1
 
 jobs:
-  build:
+  lint:
     docker:
       - image: cimg/node:18.17
     steps:
-      - checkout
-      - run: echo "npm install"
-      
-  test:
+      - run: echo "npm run lint"
+
+  unit_tests:
     docker:
       - image: cimg/node:18.17
     steps:
-      - checkout
-      
-  deploy:
+      - run: echo "npm test"
+
+  integration_tests:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/node:18.17
     steps:
-      - checkout
-      - run: echo "Deploying app..." 
-      # Here you’d run kubectl, terraform, or aws cli
+      - run: echo "npm run test:integration"
 
 workflows:
-  ci_pipeline:
+  parallel_pipeline:
     jobs:
-      - build
-      - test:
-          requires:
-            - build
-      - deploy:
-          requires:
-            - test
+      - lint
+      - unit_tests
+      - integration_tests
