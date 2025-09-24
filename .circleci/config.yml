@@ -7,9 +7,19 @@ jobs:
     steps: 
       - checkout
       - run: echo " Hello, Circleci!"
+  
+  hello-world-2:
+    docker: 
+      - image: cimg/base:stable
+    steps: 
+      - checkout
+      - run: echo " Hello, Circleci!"
 
 
 workflows: 
   build: 
     jobs: 
       - hello-world
+      - hello-world-2: 
+          requires: 
+            - hello-world
