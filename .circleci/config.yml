@@ -39,3 +39,6 @@ workflows:
           requires:
             - test_a
             - test_b
+          filters: 
+            branches:
+              only: main
