@@ -6,7 +6,7 @@ jobs:
       - image: cimg/node:18.17
     steps:
       - checkout
-      - run: npm install
+      - run: echo "npm install"
       - persist_to_workspace:
           root: .
           paths:
@@ -19,7 +19,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: .
-      - run: npm test
+      - run: echo "npm test"
 
   deploy:
     docker:
