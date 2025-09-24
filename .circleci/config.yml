@@ -1,27 +1,41 @@
 version: 2.1
 
 jobs:
-  lint:
+  build:
     docker:
-      - image: cimg/node:18.17
+      - image: cimg/python:3.11
     steps:
-      - run: echo "npm run lint"
+      - run: echo "Building..."
 
-  unit_tests:
+  test_a:
     docker:
-      - image: cimg/node:18.17
+      - image: cimg/python:3.11
     steps:
-      - run: echo "npm test"
+      - run: echo "Running Test A"
 
-  integration_tests:
+  test_b:
     docker:
-      - image: cimg/node:18.17
+      - image: cimg/python:3.11
     steps:
-      - run: echo "npm run test:integration"
+      - run: echo "Running Test B"
+
+  deploy:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run: echo "Deploying..."
 
 workflows:
-  parallel_pipeline:
+  fan_in_out:
     jobs:
-      - lint
-      - unit_tests
-      - integration_tests
+      - build
+      - test_a:
+          requires:
+            - build
+      - test_b:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test_a
+            - test_b
